@@ -1,24 +1,147 @@
 {% extends 'core/base.html' %}
-
-{% block title %}Conversation{% endblock %}
-
+{% load static %}
+{% block title %}Conversation - {{ conversation.item.name }}{% endblock %}
 {% block content %}
-<h1 class="conversation-heading">Conversation</h1>
-
-<div class="message-list">
-  {% for message in conversation.messages.all %}
-    <div class="message {% if message.created_by == request.user %}user{% else %}other{% endif %}">
-      <div>
-        <p class="message-username"><strong>{{ message.created_by.username }}</strong> @ {{ message.created_at }}</p>
-        <p>{{ message.content }}</p>
+<div class="conversation-container" 
+     data-conversation-id="{{ conversation.id }}"
+     data-current-user="{{ request.user.username }}">
+  <h1 class="conversation-heading">Conversation about {{ conversation.item.name }}</h1>
+  
+  <div class="conversation-messages" id="messages-container">
+    {% for message in conversation.messages.all %}
+    <div class="message {% if message.created_by == request.user %}sent{% else %}received{% endif %}" data-message-id="{{ message.id }}">
+      <div class="message-header">
+        <span class="sender">{{ message.created_by.username }}</span>
+        <span class="timestamp">{{ message.created_at|date:"M d, Y H:i" }}</span>
       </div>
+      <div class="message-content">{{ message.content }}</div>
     </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
+
+  <form method="post" class="message-form" id="message-form">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.content }}
+      <button type="submit" class="send-button">
+        <i class="fas fa-paper-plane"></i> Send
+      </button>
+    </div>
+  </form>
 </div>
 
-<form method="post" action="." class="message-form">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Send</button>
-</form>
+<script>
+class ConversationManager {
+    constructor(conversationId, currentUser) {
+        this.conversationId = conversationId;
+        this.currentUser = currentUser;
+        this.socket = null;
+        this.retryCount = 0;
+        this.maxRetries = 5;
+        this.initialize();
+    }
+
+    initialize() {
+        this.socket = new WebSocket(
+            `ws://${window.location.host}/ws/conversation/${this.conversationId}/`);
+
+        this.socket.onopen = () => {
+            console.log('WebSocket connection established');
+            this.retryCount = 0;
+            this.setupEventListeners();
+        };
+
+        this.socket.onmessage = (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                if (data.type === 'chat') {
+                    this.appendMessage(data);
+                } else if (data.type === 'unread_update') {
+                    this.handleUnreadUpdate(data);
+                }
+            } catch (error) {
+                console.error('Error parsing message:', error);
+            }
+        };
+
+        this.socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        this.socket.onclose = (e) => {
+            console.log(`Connection closed: ${e.code} - ${e.reason}`);
+            if (this.retryCount < this.maxRetries) {
+                this.retryCount++;
+                setTimeout(() => this.initialize(), 3000);
+            }
+        };
+    }
+
+    setupEventListeners() {
+        const form = document.getElementById('message-form');
+        if (form) {
+            // Remove previous listener to avoid duplicates
+            form.removeEventListener('submit', this.handleSubmit);
+            this.handleSubmit = this.handleSubmit.bind(this);
+            form.addEventListener('submit', this.handleSubmit);
+        }
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        const input = document.querySelector('#message-form input[name="content"]');
+        const message = input.value.trim();
+        
+        if (message && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify({
+                type: 'chat',
+                message: message,
+                sender: this.currentUser
+            }));
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    appendMessage(data) {
+        const container = document.getElementById('messages-container');
+        if (!container) return;
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${data.sender === this.currentUser ? 'sent' : 'received'}`;
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <span class="sender">${data.sender}</span>
+                <span class="timestamp">${new Date(data.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="message-content">${data.message}</div>
+        `;
+        
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    handleUnreadUpdate(data) {
+        console.log('Unread count updated:', data);
+        // Implement your unread count UI updates here
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.conversation-container');
+    if (container) {
+        new ConversationManager(
+            container.dataset.conversationId,
+            container.dataset.currentUser
+        );
+        
+        // Scroll to bottom on initial load
+        const messagesContainer = document.getElementById('messages-container');
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+});
+ </script>
 {% endblock %}

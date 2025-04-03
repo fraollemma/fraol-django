@@ -1,48 +1,54 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {% block title %}Sign up{% endblock %}
 
 {% block content %}
-
-<div class="auth-form">
-  <h1 >Create Account</h1>
-  <form method="post" action=".">
-    {% csrf_token %}
-
-
-    <div>
-      <label>Username</label><br>
-      {{ form.username }}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="{% static 'img/LOGO.jpg' %}" alt="Logo" class="auth-logo">
+      <h1>Create Account</h1>
+      <p>Join our community</p>
     </div>
 
-      <div>
-        <label>Email</label><br>
-        {{ form.email }}
-      </div>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      
+      {{ form.username }}
+      {{ form.email }}
+      {{ form.phone }}
+      {{ form.password1 }}
+      {{ form.password2 }}
 
-      <div>
-        <label>Password</label><br>
-        {{ form.password1 }}
-      </div>
-
-      <div>
-        <label >Repeat Password</label><br>
-        {{ form.password2 }}
-      </div>
-
-      {% if form.errors or form.non_field_errors %}
-       <div class="error">
-        {% for fiel in form %}
-        {{ field.errors }}
-        {% endfor %}
-        
-    {{ form.non_field_errors }}
+      {% if form.errors %}
+        <div class="error-message">
+          Please correct the errors below
         </div>
       {% endif %}
 
-      
-    <button type="submit">Submit</button>
-  </form>
+      <button type="submit" class="auth-button">Sign Up</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="{% url 'core:login' %}" class="auth-link">Log in</a></p>
+    </div>
+  </div>
 </div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('.auth-form');
+      const submitButton = form.querySelector('.auth-button');
+      const loadingIcon = form.querySelector('.loading-icon');
+      
+      form.addEventListener('submit', function() {
+          submitButton.disabled = true;
+          loadingIcon.style.display = 'inline-block';
+          submitButton.querySelector('.button-text').textContent = 'Logging in...';
+      });
+  });
+</script>
 
 {% endblock %}

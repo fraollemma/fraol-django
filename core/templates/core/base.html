@@ -1,49 +1,129 @@
+{% load static %}
+{% load conversation_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
-  <title>{% block title %} {% endblock %} | puddle</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fraollemma - First poultry online marketplace ">
+    <meta name="keywords" content="ethiochicken, poulry, egg, chicken , marketplace, buy, sell, items">
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+    
+    <link rel="icon" type="image/png" href="{% static 'images/LOGO.jpg' %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/conversation.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+<title>{% block title %} {% endblock %} | Fraollemma</title>
+
 </head>
-<body>
-  <nav class="nav">
-    <a href="/" class="nav-logo">Puddle</a>
+<body data-user-id="{{ request.user.id }}" class="smooth-transitions">
 
-    <div class="nav-links">
-      <a href="{% url 'item:new' %}" class="nav-link">New item</a>
-      <a href="{% url 'item:items' %}" class="nav-link">Browse</a>
+   <!-- In your base.html template -->
+<nav class="core-navbar" id="dynamic-navbar">
+    <div class="navbar-overlay"></div> <!-- For overlay effect -->
+    <div class="core-navbar-container">
+        <a href="/" class="core-logo">
+            <img src="{% static 'img/LOGO.jpg' %}" alt="Poultry Marketplace Logo" class="core-logo-img">
+        </a>
 
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'conversation:inbox' %}" class="nav-button">Inbox</a>
-        <a href="{% url 'dashboard:index' %}" class="nav-button">Dashboard</a>
-      {% else %}
-        <a href="{% url 'core:signup' %}" class="nav-button">Sign up</a>
-        <a href="{% url 'core:login' %}" class="nav-button">Log in</a>
-      {% endif %}
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <div class="core-nav-links" id="nav-links">
+            <div class="core-nav-item">
+                <a href="/" class="core-nav-link hover-underline">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <span class="core-link-underline"></span>
+            </div>
+
+            <div class="core-nav-item">
+                <a href="{% url 'item:new' %}" class="core-nav-link hover-underline">
+                    <i class="fas fa-plus"></i> Add Item
+                </a>
+                <span class="core-link-underline"></span>
+            </div>
+
+            <div class="core-nav-item">
+                <a href="{% url 'item:items' %}" class="core-nav-link hover-underline">
+                    <i class="fas fa-search"></i> Search
+                </a>
+                <span class="core-link-underline"></span>
+            </div>
+
+            <div class="core-nav-item">
+                <a href="{% url 'core:contact' %}" class="core-nav-link hover-underline">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
+                <span class="core-link-underline"></span>
+            </div>
+
+            {% if request.user.is_authenticated %}
+            <div class="core-nav-item">
+                <a href="{% url 'conversation:inbox' %}" class="core-btn-primary">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="btn-text">Chat</span>
+                    {% if unread_messages_count > 0 %}
+                    <span class="nav-unread-count">{{ unread_messages_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+            <div class="core-nav-item">
+                <a href="{% url 'dashboard:index' %}" class="core-btn-secondary slide-icon">
+                    <i class="fas fa-box-open"></i> <span class="btn-text">My Items</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="core-nav-item">
+                <a href="{% url 'core:signup' %}" class="core-btn-primary pulse-on-hover">
+                    <i class="fas fa-user-plus"></i> <span class="btn-text">Sign Up</span>
+                </a> 
+            </div>
+            <div class="core-nav-item">
+                <a href="{% url 'core:login' %}" class="core-btn-secondary slide-icon">
+                    <i class="fas fa-sign-in-alt"></i> <span class="btn-text">Log In</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </nav>
+</nav>
 
-  <div class="content">
-    {% block content %}
-    {% endblock %}
-  </div>
-
-  <footer class="footer">
-    <div class="footer-about">
-      <h3>About</h3>
-      <p>FRAOL LEMMA bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla ....</p>
+    <div class="core-content">
+        {% block content %}
+        {% endblock %}
     </div>
 
-    <div class="footer-menu">
-      <h3>Menu</h3>
-      <ul>
-        <li><a href="#">About</a></li>
-        <li><a href="{% url 'core:contact' %}">Contact</a></li>
-        <li><a href="#">Privacy policy</a></li>
-        <li><a href="#">Term of use</a></li>
-      </ul>
-    </div>
-  </footer>
+    <footer class="core-sticky-footer">
+        <div class="core-footerContainer">
+            <div class="core-socialIcons">
+                <a href="https://t.me/nomoreboundaryorlimitation" aria-label="Telegram"><i class="fab fa-telegram"></i></a> 
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Google Plus"><i class="fab fa-google-plus-g"></i></a>
+                <a href="https://www.youtube.com/channel/UC87ikLHxeF9SJH25JeVrceA" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="core-footerBottom">
+            <p>Copyright &copy;<span id="year">2023</span> | 
+               <a href="{% url 'core:contact' %}" class="footer-link">Contact Us</a> | 
+               Designed by <span class="core-designer pulse">Fraol</span> Ethio_Poultry
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+<script src="{% static 'js/base.js' %}" defer></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

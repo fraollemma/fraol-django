@@ -1,45 +1,53 @@
 {% extends 'core/base.html' %}
-
-{% block title %}
-Welcome
-{% endblock %}
-
+{% block title %}Welcome{% endblock %}
 {% block content %}
-<div class="item-list">
-  <h2>Newest items</h2>
-
-  <div class="item-grid">
-    {% for item in items %}
-    <div class="item-card">
-      <a href="{% url 'item:detail' item.id %}">
-        <div>
-          <img src="{{ item.image.url }}" alt="{{ item.name }}">
-        </div>
-
-        <div class="item-card-content">
-          <h2>{{ item.name }}</h2>
-          <p>Price: {{ item.price }}</p>
-        </div>
-      </a>
+<div class="welcome-section">
+    <h1 class="section-title">Newest Items</h1>
+    <div class="item-grid">
+      {% for item in items %}
+      <div class="item-card" >
+        <a href="{% url 'item:detail' item.id %}" class="card-link">
+          <div class="item-image">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.name }}" class="item-img">
+            {% else %}
+              <div class="no-image">
+                <i class="fas fa-camera"></i>
+                <p>No image available</p>
+              </div>
+            {% endif %}
+          </div>
+          <div class="item-details">
+            <h2>{{ item.name }}</h2>
+            <div class="price-tag">
+              <span class="price">{{ item.price }}</span> _Birr
+            </div>
+          </div>
+          <div class="card-hover-effect"></div>
+        </a>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
-</div>
 
-<div class="item-list">
-  <h2>Categories</h2>
-
-  <div class="item-grid">
-    {% for category in categories %}
-    <div class="item-card">
-      <a href="#">
-        <div class="item-card-content">
-          <h2>{{ category.name }}</h2>
-          <p>{{ category.items.count }} items</p>
-        </div>
-      </a>
+  <div class="categories-section">
+    <h2 class="section-title">Browse Categories</h2>
+    <div class="category-grid">
+      {% for category in categories %}
+      <div class="category-card">
+        <a href="#" class="category-link">
+          <div class="category-details">
+            <h2>{{ category.name }}</h2>
+            <div class="item-count-bubble">
+              <span>{{ category.items.count }}</span>
+              <span>items</span>
+            </div>
+          </div>
+          <div class="category-overlay"></div>
+        </a>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 </div>
 {% endblock %}

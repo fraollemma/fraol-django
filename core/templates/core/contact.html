@@ -1,9 +1,72 @@
 {% extends 'core/base.html' %}
-
-{% block title %}
-contact
-{% endblock %}
-
+{% block title %}Contact Us{% endblock %}
 {% block content %}
-<h1>The contact page ...</h1>
+<div class="contact-container">
+    <div class="contact-content">
+        <h1 class="contact-heading">Get in Touch</h1>
+        <p class="contact-subheading">We'd love to hear from you! Send us a message and we'll respond as soon as possible.</p>
+        
+        <form method="post" action="." class="contact-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_name">Your Name</label>
+                <input type="text" id="id_name" name="name" required class="form-input" placeholder="Fraollemma">
+                <div class="focus-line"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_email">Email Address</label>
+                <input type="email" id="id_email" name="email" required class="form-input" placeholder="you@example.com">
+                <div class="focus-line"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_subject">Subject</label>
+                <input type="text" id="id_subject" name="subject" class="form-input" placeholder="How can we help?">
+                <div class="focus-line"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_message">Your Message</label>
+                <textarea id="id_message" name="message" rows="5" required class="form-textarea" placeholder="Write your message here..."></textarea>
+                <div class="focus-line"></div>
+            </div>
+            
+            {% if form.errors or form.non_field_errors %}
+            <div class="form-errors animate-shake">
+                {% for field in form %}
+                    {{ field.errors }}
+                {% endfor %}
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            
+            <button type="submit" class="submit-btn">
+                <span class="btn-text">Send Message</span>
+                <span class="btn-icon">→</span>
+            </button>
+        </form>
+    </div>
+    
+    <div class="contact-info">
+        <div class="info-card animate-float">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Our Location</h3>
+            <p>Bishoftu .. <br>& Gelan..</p>
+        </div>
+        
+        <div class="info-card animate-float" style="animation-delay: 0.2s;">
+            <i class="fas fa-phone-alt"></i>
+            <h3>Phone Number</h3>
+            <p>+251 975060586<br>saturday & Sunday, 9am-5pm</p>
+        </div>
+        
+        <div class="info-card animate-float" style="animation-delay: 0.4s;">
+            <i class="fas fa-envelope"></i>
+            <h3>Email Address</h3>
+            <p>fraollemma0506@gmail.com.com<br>support@yourcompany.com</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

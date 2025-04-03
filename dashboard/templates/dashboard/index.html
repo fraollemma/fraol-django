@@ -6,19 +6,25 @@ Dashboard
 
 {% block content %}
 <div class="dashboard-container">
-  <h2 class="dashboard-heading">My items</h2>
+  <h2 class="dashboard-heading">Your Items</h2>
 
-  <div class="item-grid">
+  <div class="dashboard-grid">
     {% for item in items %}
-      <a href="{% url 'item:detail' item.id %}" class="item-card">
-        <div>
-          <img src="{{ item.image.url }}" alt="{{ item.name }}">
+    <div class="dashboard-item-card">
+      <a href="{% url 'item:detail' item.id %}" class="dashboard-item-link">
+        <div class="dashboard-item-image-container">
+            {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="dashboard-item-image">
+          {% else %}
+  <p>No image available</p>
+{% endif %}
         </div>
-        <div class="item-card-content">
-          <h2>{{ item.name }}</h2>
-          <p>Price: {{ item.price }}</p>
+        <div class="dashboard-item-details">
+          <h2 class="dashboard-item-name">{{ item.name }}</h2>
+          <p class="dashboard-item-price">Price: {{ item.price }}</p>
         </div>
       </a>
+    </div>
     {% endfor %}
   </div>
 </div>

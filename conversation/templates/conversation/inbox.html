@@ -1,28 +1,67 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% load conversation_filters %}
 
 {% block title %}Inbox{% endblock %}
 
 {% block content %}
-<h1 class="inbox-heading">Inbox</h1>
-
-<div class="conversation-list">
-  {% for conversation in conversations %}
-    <a href="{% url 'conversation:detail' conversation.id %}" class="conversation-link">
-      <div class="conversation-card">
+<div class="inbox-container">
+  <h1 class="inbox-heading">Your Conversations</h1>
+  
+  <div class="conversation-list">
+    {% for conversation in conversations %}
+    <a href="{% url 'conversation:detail' conversation.id %}" 
+       class="conversation-link" 
+       data-conversation-id="{{ conversation.id }}"
+       aria-label="Conversation about {{ conversation.item.name }}">
+      <div class="conversation-card {% if unread_counts|get_unread_count:conversation.id > 0 %}unread{% endif %}">
         <div class="conversation-image">
-          <img src="{{ conversation.item.image.url }}" alt="{{ conversation.item.name }}">
+          {% if conversation.item.image %}
+          <img src="{{ conversation.item.image.url }}" 
+               alt="{{ conversation.item.name }}" 
+               loading="lazy"
+               width="80"
+               height="80">
+          {% else %}
+          <div class="no-image">No Image</div>
+          {% endif %}
         </div>
-
-        <div class="conversation-details">
+        <div class="conversation-info">
           {% for member in conversation.members.all %}
             {% if member != request.user %}
-              <p class="conversation-username"><strong>{{ member.username }}</strong> | {{ conversation.modified_at }}</p>
-              <p class="conversation-item-name">{{ conversation.item.name }}</p>
+            <div class="conversation-header">
+              <h3 class="conversation-username">{{ member.username }}</h3>
+              <span class="time">{{ conversation.modified_at|timesince }} ago</span>
+              {% if unread_counts|get_unread_count:conversation.id > 0 %}
+              <span class="unread-count" id="unread-{{ conversation.id }}">
+                {{ unread_counts|get_unread_count:conversation.id }}
+              </span>
+              {% endif %}
+            </div>
+            <p class="item-name">{{ conversation.item.name }}</p>
+            <p class="last-message" title="{% if conversation.messages.last %}{{ conversation.messages.last.content }}{% endif %}">
+              {% if conversation.messages.last %}
+                {{ conversation.messages.last.content|truncatechars:50 }}
+              {% else %}
+                No messages yet
+              {% endif %}
+            </p>
             {% endif %}
           {% endfor %}
         </div>
       </div>
     </a>
-  {% endfor %}
+    {% empty %}
+    <div class="empty-inbox">
+      <p>No conversations yet</p>
+      <a href="{% url 'core:index' %}" class="browse-button">Browse Items</a>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/inbox.js' %}" defer></script>
 {% endblock %}
