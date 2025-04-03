@@ -90,10 +90,11 @@ WSGI_APPLICATION = 'puddle.wsgi.application'
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
 
+# Update your CACHES configuration
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": os.getenv("REDIS_URL", "redis://localhost:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
