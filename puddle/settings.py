@@ -4,31 +4,43 @@ import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
 from environ import Env
+
 env = Env()
 Env.read_env()
 
 ENVIRONMENT = env('ENVIRONMENT', default="production")
 
 
-
-
-CLOUDINARY_URL = 'cloudinary://<CLOUD_API_KEY>:<API_SECRET>@<CLOUD_NAME>'
-
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
-
-SECRET_KEY = env('SECRET_KEY')  
-
-
 DEBUG = True
 
 
+SECRET_KEY = env('SECRET_KEY')  
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
+CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
+
+cloudinary.config(
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('CLOUD_API_KEY'),
+    api_secret=os.getenv('CLOUD_API_SECRET')  
+)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUD_API_KEY'),
+    'API_SECRET': os.getenv('CLOUD_API_SECRET')
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+REDIS_URL = os.getenv('REDIS_URL')
+
+if ENVIRONMENT == 'production' and not REDIS_URL:
+    raise ValueError("REDIS_URL must be set in production")
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 LOGIN_URL = '/login/'
@@ -51,22 +63,7 @@ INSTALLED_APPS = [
     'item',
 ]
 
-cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('CLOUD_API_KEY'),
-    api_secret=os.getenv('CLOUD_API_SECRET')  
-)
 
-
-# Update CLOUDINARY_STORAGE to match:
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUD_API_KEY'),
-    'API_SECRET': os.getenv('CLOUD_API_SECRET')
-}
-
-
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -105,11 +102,10 @@ WSGI_APPLICATION = 'puddle.wsgi.application'
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
 
 
-# Update your CACHES configuration
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://localhost:6379/0"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -123,8 +119,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_URL)],
-            "symmetric_encryption_keys": [SECRET_KEY],
+            "hosts": [REDIS_URL],
         },
     },
 }
@@ -172,26 +167,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
-
-
-
-
 STATIC_URL = 'static/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-
-
-
-
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
