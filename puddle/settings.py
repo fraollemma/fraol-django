@@ -6,16 +6,14 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-4op37g)6uyi!pq5@sx$dl=hvh#ckt4_ry9*kdpd&u^v1m)($ah')
+SECRET_KEY = os.environ['SECRET_KEY']  
 
 
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True
 
 
-ALLOWED_HOSTS = ['yourdomain.com', 'puddle.railway.app', 'yourapp.railway.app', '.railway.app']
-if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+ALLOWED_HOSTS = ["*"]
 
 
 
@@ -147,16 +145,22 @@ USE_TZ = True
 
 
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = 'static/'
+STATIC_ROOT = 'staticfiles'
+STATICFILES_DIRS = [
+    OS.path.join(BASE_DIR, 'static')
+]
 
 
 
 
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
