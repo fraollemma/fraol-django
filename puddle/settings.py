@@ -22,10 +22,7 @@ CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 SECRET_KEY = env('SECRET_KEY')  
 
 
-if ENVIRONMENT == 'development':
-    DEBUG = True
-else:
-    DEBUG = True
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
