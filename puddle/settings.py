@@ -12,7 +12,9 @@ Env.read_env()
 ENVIRONMENT = env('ENVIRONMENT', default="production")
 
 
-CLOUDINARY_URL = 'cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>'
+
+
+CLOUDINARY_URL = 'cloudinary://<CLOUD_API_KEY>:<API_SECRET>@<CLOUD_NAME>'
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +51,22 @@ INSTALLED_APPS = [
     'item',
 ]
 
+cloudinary.config(
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('CLOUD_API_KEY'),
+    api_secret=os.getenv('CLOUD_API_SECRET')  
+)
+
+
+# Update CLOUDINARY_STORAGE to match:
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUD_API_KEY'),
+    'API_SECRET': os.getenv('CLOUD_API_SECRET')
+}
+
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -120,7 +138,8 @@ DATABASES = {
 }
 
 
-# Security headers
+
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
