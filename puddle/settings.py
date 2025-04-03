@@ -10,7 +10,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 
 
 ALLOWED_HOSTS = ["*"]
@@ -72,15 +73,15 @@ TEMPLATES = [
 ASGI_APPLICATION = 'puddle.asgi.application'
 WSGI_APPLICATION = 'puddle.wsgi.application'
 
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("redis://default:HksYGLcijuzbRTYhiOySukvurAOwGkLt@redis.railway.internal:6379", "redis://localhost:6379/0"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": os.getenv("HksYGLcijuzbRTYhiOySukvurAOwGkLt", ""),
         }
     }
 }
@@ -92,7 +93,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [REDIS_URL],
+            "hosts": [(REDIS_URL)],
             "symmetric_encryption_keys": [SECRET_KEY],
         },
     },
@@ -101,11 +102,11 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600,
-        ssl_require=True
+        default=f'sqlite:///{BASE_DIR.as_posix()}/db.sqlite3',
+        conn_max_age=600
     )
 }
+
 
 # Security headers
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -148,7 +149,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = [
-    OS.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static')
 ]
 
 
@@ -156,7 +157,8 @@ STATICFILES_DIRS = [
 
 
 
-STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 
 
