@@ -5,6 +5,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 
 SECRET_KEY = os.environ['SECRET_KEY']  
 
