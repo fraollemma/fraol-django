@@ -11,7 +11,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True
 
 
 
