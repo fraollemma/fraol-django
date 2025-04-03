@@ -1,21 +1,34 @@
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+from environ import Env
+env = Env()
+Env.read_env()
+
+ENVIRONMENT = env('ENVIRONMENT', default="production")
+
+
+CLOUDINARY_URL = 'cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>'
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 
-SECRET_KEY = os.environ['SECRET_KEY']  
+SECRET_KEY = env('SECRET_KEY')  
 
 
+if ENVIRONMENT == 'development':
+    DEBUG = True
+else:
+    DEBUG = False
 
-DEBUG = True
 
-
-
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 
 
