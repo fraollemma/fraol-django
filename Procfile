@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: python manage.py collectstatic --noinput && waitress-serve --port=$PORT puddle.wsgi:application
+web: daphne -b 0.0.0.0 -p $PORT puddle.asgi:application
