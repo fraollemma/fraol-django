@@ -35,11 +35,11 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-REDIS_URL = os.getenv('REDIS_URL')
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+REDIS_TLS_URL = os.getenv('REDIS_TLS_URL')
 
-if ENVIRONMENT == 'production' and not REDIS_URL:
-    raise ValueError("REDIS_URL must be set in production")
-
+if REDIS_TLS_URL and ENVIRONMENT == 'production':
+    REDIS_URL = REDIS_TLS_URL
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -125,11 +125,11 @@ CHANNEL_LAYERS = {
     },
 }
 
+
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
         conn_max_age=600,
-        conn_health_checks=True,
         ssl_require=True
     )
 }
