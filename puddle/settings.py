@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "puddle.settings")
 import dj_database_url
 import cloudinary
 import cloudinary.uploader
