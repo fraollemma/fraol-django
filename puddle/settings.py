@@ -13,7 +13,7 @@ Env.read_env()
 ENVIRONMENT = env('ENVIRONMENT', default="production")
 
 
-DEBUG = True
+DEBUG = False
 
 
 SECRET_KEY = env('SECRET_KEY')  
