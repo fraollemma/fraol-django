@@ -35,11 +35,7 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
-REDIS_TLS_URL = os.getenv('REDIS_TLS_URL')
-
-if REDIS_TLS_URL and ENVIRONMENT == 'production':
-    REDIS_URL = REDIS_TLS_URL
+REDIS_URL = os.getenv('REDIS_TLS_URL') if ENVIRONMENT == 'production' else os.getenv('REDIS_URL', 'redis://localhost:6379')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
