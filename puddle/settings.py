@@ -172,5 +172,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUD_NAME")}/image/upload/'
+MEDIA_ROOT = BASE_DIR / 'media'
