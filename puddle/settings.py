@@ -21,15 +21,14 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 
-cloudinary.config(
-    url=os.getenv('CLOUDINARY_URL')
-)
 
 cloudinary.config(
     cloud_name="doixo5oiw",
     api_key="435759228322341",
     api_secret="H3_ZVEXWGcyuE28IfKWUYsTo5sY"
 )
+
+
 
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
