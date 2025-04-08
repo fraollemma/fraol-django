@@ -26,7 +26,7 @@ CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 # Cloudinary
 CLOUDINARY_URL = env('CLOUDINARY_URL')
 
-# Let cloudinary.storage pick up the CLOUDINARY_URL automatically
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
