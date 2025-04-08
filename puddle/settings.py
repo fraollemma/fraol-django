@@ -4,6 +4,7 @@ import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from cloudinary.utils import cloudinary_url
 from environ import Env
 from dotenv import load_dotenv
 load_dotenv()  # This loads the .env file
@@ -21,21 +22,13 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 
-cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('CLOUD_API_KEY'),
-    api_secret=os.getenv('CLOUD_API_SECRET')
-)
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUD_API_KEY'),
-    'API_SECRET': os.getenv('CLOUD_API_SECRET'),
-}
+# Cloudinary
+CLOUDINARY_URL = env('CLOUDINARY_URL')
 
-
-
+# Let cloudinary.storage pick up the CLOUDINARY_URL automatically
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 REDIS_URL = os.getenv('REDIS_TLS_URL') if ENVIRONMENT == 'production' else os.getenv('REDIS_URL', 'redis://localhost:6379')
 
@@ -50,6 +43,8 @@ LOGOUT_REDIRECT_URL = '/'
 INSTALLED_APPS = [
     'daphne', 
     'channels',
+    'cloudinary',
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -173,6 +168,3 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-MEDIA_URL = f'https://res.cloudinary.com/{os.getenv("CLOUD_NAME")}/image/upload/'
-MEDIA_ROOT = BASE_DIR / 'media'
