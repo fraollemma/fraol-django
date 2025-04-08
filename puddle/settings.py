@@ -22,9 +22,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 CSRF_TRUSTED_ORIGINS= ["https://fraol-django-production.up.railway.app"]
 
 cloudinary.config(
-    cloud_name=os.getenv('CLOUD_NAME'),
-    api_key=os.getenv('CLOUD_API_KEY'),
-    api_secret=os.getenv('CLOUD_API_SECRET')  
+    url=os.getenv('CLOUDINARY_URL')
 )
 
 CLOUDINARY_STORAGE = {
